@@ -217,7 +217,7 @@ function initCropRect(bmp,det){
   var iw=bmp.width,ih=bmp.height;
   var fcx=iw/2,fT=ih*0.12,fB=ih*0.5;
   if(det&&det._sx){var sx=det._sx,sy=det._sy,pts=det.landmarks.positions,lx=0,rx2=0;for(var i=36;i<42;i++)lx+=pts[i].x*sx;for(var i=42;i<48;i++)rx2+=pts[i].x*sx;fcx=(lx/6+rx2/6)/2;var b=det.detection.box;fT=b.y*sy;fB=(b.y+b.height)*sy;}else if(det){var pts=det.landmarks.positions,lx=0,rx2=0;for(var i=36;i<42;i++)lx+=pts[i].x;for(var i=42;i<48;i++)rx2+=pts[i].x;fcx=(lx/6+rx2/6)/2;var b=det.detection.box;fT=b.y;fB=b.y+b.height;}
-  var fh=fB-fT,hsVal=parseFloat(document.getElementById("hs").value)||0.42,tm2=parseFloat(document.getElementById("tm").value)||0.35;
+  var fh=fB-fT,hsVal=0.42,tm2=0.35;
   var origW=iw,origH=ih;vw=origW;vh=origH;vx=0;vy=0;
   cropRect={fcx:fcx,fT:fT,fB:fB,fh:fh};
   if(det){
@@ -243,7 +243,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih){
   ctx.beginPath();ctx.moveTo(ccx,ccy+cph/2);ctx.lineTo(ccx+cpw,ccy+cph/2);ctx.stroke();ctx.setLineDash([]);
   
   // --- Target face area (ghost outline based on settings) ---
-  var hsVal=parseFloat(document.getElementById("hs").value),tm2=parseFloat(document.getElementById("tm").value);
+  var hsVal=0.42,tm2=0.35;
   // Eye level is at (topMargin + faceHeight*0.36) from top of crop
   var eyeY=ccy+cph*(tm2+hsVal*0.36),eyeX=ccx+cpw/2;
   // Draw eye level reference line (more visible)
@@ -501,8 +501,8 @@ html = f'''<!DOCTYPE html>
         </div>
       </div>
 
-      <div class="field"><div class="field-label"><label>头像占比</label><span class="val" id="hsv">42%</span></div><input id="hs" type="range" min="0.28" max="0.78" step="0.01" value="0.42" oninput="document.getElementById('hsv').textContent=Math.round(this.value*100)+'%';needsRedraw=true"/></div>
-      <div class="field"><div class="field-label"><label>额头留白 <small style="font-weight:400;color:var(--muted)">（头顶到裁切框顶部的距离）</small></label><span class="val" id="tmv">35%</span></div><input id="tm" type="range" min="0.05" max="0.40" step="0.01" value="0.35" oninput="document.getElementById('tmv').textContent=Math.round(this.value*100)+'%';needsRedraw=true"/></div>
+      <input id="hs" type="range" min="0.28" max="0.78" step="0.01" value="0.42" oninput="document.getElementById('hsv').textContent=Math.round(this.value*100)+'%';needsRedraw=true"/></div>
+      <input id="tm" type="range" min="0.05" max="0.40" step="0.01" value="0.35" oninput="document.getElementById('tmv').textContent=Math.round(this.value*100)+'%';needsRedraw=true"/></div>
 
       <div class="field"><label>排版模式</label><select id="sm">
         <option value="single">单张导出</option>
