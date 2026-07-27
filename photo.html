@@ -356,14 +356,14 @@ function initCropRect(bmp,det){
   var fcx=iw/2,fT=ih*0.12,fB=ih*0.5;
   if(det&&det._sx){var sx=det._sx,sy=det._sy,pts=det.landmarks.positions,lx=0,rx2=0;for(var i=36;i<42;i++)lx+=pts[i].x*sx;for(var i=42;i<48;i++)rx2+=pts[i].x*sx;fcx=(lx/6+rx2/6)/2;var b=det.detection.box;fT=b.y*sy;fB=(b.y+b.height)*sy;}else if(det){var pts=det.landmarks.positions,lx=0,rx2=0;for(var i=36;i<42;i++)lx+=pts[i].x;for(var i=42;i<48;i++)rx2+=pts[i].x;fcx=(lx/6+rx2/6)/2;var b=det.detection.box;fT=b.y;fB=b.y+b.height;}
   var fh=fB-fT,hsVal=parseFloat(document.getElementById("hs").value)||0.42,tm2=parseFloat(document.getElementById("tm").value)||0.35;
-  vw=iw;vh=ih;vx=0;vy=0;
+  var origW=iw,origH=ih;vw=origW;vh=origH;vx=0;vy=0;
   cropRect={fcx:fcx,fT:fT,fB:fB,fh:fh};
   if(det){
     var fc=getFixedCrop();var targetPw=fh/hsVal;var zoom=Math.max(0.5,Math.min(targetPw/fc.pw,3));
     vw=iw/zoom;vh=ih/zoom;
     vx=Math.max(0,Math.min(fcx-vw/2,iw-vw));vy=Math.max(0,Math.min((fT+fB)/2-vh*0.45,ih-vh));
-    var fromVx=iw/2-vw/2,fromVy=ih*0.3-vh*0.4;
-    fromVx=Math.max(0,Math.min(fromVx,iw-vw));fromVy=Math.max(0,Math.min(fromVy,ih-vh));
+    var fromVx=Math.max(0,Math.min(origW/2-vw/2,iw-vw));
+    var fromVy=Math.max(0,Math.min(origH*0.3-vh*0.4,ih-vh));
     animFrom={vx:fromVx,vy:fromVy};animTo={vx:vx,vy:vy};animStart=Date.now();
   }
   var fc2=getFixedCrop();cropRect.cx=fc2.cx;cropRect.cy=fc2.cy;cropRect.pw=fc2.pw;cropRect.ph=fc2.ph;
