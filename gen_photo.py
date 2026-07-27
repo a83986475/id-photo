@@ -60,10 +60,10 @@ button,input,select,textarea{font:inherit}canvas{display:block;max-width:100%}
 .seg input[type=radio]{display:none}.seg label span{display:block;padding:.18rem .12rem;border-radius:7px;transition:all var(--transition)}
 .seg input:checked+span{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(11,88,64,.25)}
 .swatches{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.25rem}
-.swatch{width:34px;height:34px;border-radius:999px;cursor:pointer;border:3px solid transparent;transition:all var(--transition);flex-shrink:0}
+.swatch{width:34px;height:34px;border-radius:999px;cursor:pointer;border:3px solid transparent;transition:all var(--transition);flex-shrink:0;position:relative;overflow:hidden}
 .swatch:hover{transform:scale(1.1);z-index:2}
 .swatch.selected{border-color:var(--text);transform:scale(1.08);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--p)}
-.swatch .check{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .12s;font-size:.65rem;color:#fff}
+.swatch .check{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .12s;font-size:.65rem;color:#fff;pointer-events:none}
 .swatch.selected .check{opacity:1}
 
 .btn{padding:.7rem 1.2rem;border:none;border-radius:999px;cursor:pointer;font-weight:700;font-size:.85rem;transition:all var(--transition);display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap}
@@ -160,7 +160,6 @@ JS = r'''(function(){
 "use strict";
 var root=document.documentElement,tbtn=document.getElementById("tbtn"),up=document.getElementById("upload"),dropZone=document.getElementById("dropZone"),sz=document.getElementById("sz"),sm=document.getElementById("sm"),bgcf=document.getElementById("bgcf"),swatches=document.getElementById("swatches"),genBtn=document.getElementById("genBtn"),dlBtn=document.getElementById("dlBtn"),sb=document.getElementById("sb"),pw=document.getElementById("pw"),pb=document.getElementById("pb"),sc=document.getElementById("sc"),mc=document.getElementById("mc"),rc=document.getElementById("rc"),sx=sc.getContext("2d"),mx=mc.getContext("2d"),rx=rc.getContext("2d"),fn=document.getElementById("fn"),mn=document.getElementById("mn"),rn=document.getElementById("rn"),rw=document.getElementById("rw"),lrBtn=document.getElementById("lrBtn"),photoName=document.getElementById("photoName"),photoDims=document.getElementById("photoDims"),photoInfo=document.getElementById("photoInfo"),ov=document.getElementById("ov"),mbi=document.getElementById("mbi"),ms=document.getElementById("ms");
 var srcImg=null,faceRes=null,rmbgSess=null,dlURL=null,dlBlob=null,cropRect=null,dragState=null,cachedAl=null,cachedComp=null,animFrom=null,animTo=null,animStart=0,needsRedraw=false,pulsePhase=0,renderId=null;
-dropZone.addEventListener("click",function(){upload.click();});
 var FM="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model",RM="https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_quantized.onnx";
 var vx=0,vy=0,vw=0,vh=0;
 function setStatus(m,c){sb.textContent=m;sb.className="status"+(c?" "+c:"");}
@@ -435,11 +434,11 @@ html = f'''<!DOCTYPE html>
     <!-- Left column: upload area -->
     <div class="panel" id="leftPanel">
       <!-- Upload: label triggers hidden file input (no CSS overlay, no JS click handler) -->
-      <label class="upload-zone" id="dropZone">
+      <div class="upload-zone" id="dropZone" onclick="document.getElementById('upload').click()">
         <span class="icon">📁</span>
         <div class="label">上传照片或拖拽到此处</div>
         <div class="hint">支持 JPG / PNG / WebP</div>
-      </label>
+      </div>
       <input id="upload" type="file" accept="image/*" style="display:none"/>
 
       <div id="photoInfo" class="hidden" style="font-size:.73rem;color:var(--muted);margin:-.3rem 0 .5rem;padding:.35rem .55rem;background:var(--s2);border-radius:7px;display:flex;justify-content:space-between">

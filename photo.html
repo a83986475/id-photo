@@ -55,10 +55,10 @@ button,input,select,textarea{font:inherit}canvas{display:block;max-width:100%}
 .seg input[type=radio]{display:none}.seg label span{display:block;padding:.18rem .12rem;border-radius:7px;transition:all var(--transition)}
 .seg input:checked+span{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(11,88,64,.25)}
 .swatches{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.25rem}
-.swatch{width:34px;height:34px;border-radius:999px;cursor:pointer;border:3px solid transparent;transition:all var(--transition);flex-shrink:0}
+.swatch{width:34px;height:34px;border-radius:999px;cursor:pointer;border:3px solid transparent;transition:all var(--transition);flex-shrink:0;position:relative;overflow:hidden}
 .swatch:hover{transform:scale(1.1);z-index:2}
 .swatch.selected{border-color:var(--text);transform:scale(1.08);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--p)}
-.swatch .check{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .12s;font-size:.65rem;color:#fff}
+.swatch .check{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .12s;font-size:.65rem;color:#fff;pointer-events:none}
 .swatch.selected .check{opacity:1}
 
 .btn{padding:.7rem 1.2rem;border:none;border-radius:999px;cursor:pointer;font-weight:700;font-size:.85rem;transition:all var(--transition);display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap}
