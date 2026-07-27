@@ -160,6 +160,7 @@ JS = r'''(function(){
 "use strict";
 var root=document.documentElement,tbtn=document.getElementById("tbtn"),up=document.getElementById("upload"),dropZone=document.getElementById("dropZone"),sz=document.getElementById("sz"),sm=document.getElementById("sm"),bgcf=document.getElementById("bgcf"),swatches=document.getElementById("swatches"),genBtn=document.getElementById("genBtn"),dlBtn=document.getElementById("dlBtn"),sb=document.getElementById("sb"),pw=document.getElementById("pw"),pb=document.getElementById("pb"),sc=document.getElementById("sc"),mc=document.getElementById("mc"),rc=document.getElementById("rc"),sx=sc.getContext("2d"),mx=mc.getContext("2d"),rx=rc.getContext("2d"),fn=document.getElementById("fn"),mn=document.getElementById("mn"),rn=document.getElementById("rn"),rw=document.getElementById("rw"),lrBtn=document.getElementById("lrBtn"),photoName=document.getElementById("photoName"),photoDims=document.getElementById("photoDims"),photoInfo=document.getElementById("photoInfo"),ov=document.getElementById("ov"),mbi=document.getElementById("mbi"),ms=document.getElementById("ms");
 var srcImg=null,faceRes=null,rmbgSess=null,dlURL=null,dlBlob=null,cropRect=null,dragState=null,cachedAl=null,cachedComp=null,animFrom=null,animTo=null,animStart=0,needsRedraw=false,pulsePhase=0,renderId=null;
+dropZone.addEventListener("click",function(){upload.click();});
 var FM="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model",RM="https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_quantized.onnx";
 var vx=0,vy=0,vw=0,vh=0;
 function setStatus(m,c){sb.textContent=m;sb.className="status"+(c?" "+c:"");}
@@ -363,7 +364,7 @@ html = f'''<!DOCTYPE html>
     <!-- Left column: upload area -->
     <div class="panel" id="leftPanel">
       <!-- Upload: label triggers hidden file input (no CSS overlay, no JS click handler) -->
-      <label for="upload" class="upload-zone" id="dropZone">
+      <label class="upload-zone" id="dropZone">
         <span class="icon">📁</span>
         <div class="label">上传照片或拖拽到此处</div>
         <div class="hint">支持 JPG / PNG / WebP</div>
