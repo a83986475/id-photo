@@ -137,6 +137,11 @@ button,input,select,textarea{font:inherit}canvas{display:block;max-width:100%}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.7rem 1rem;box-shadow:var(--shadow-lg);font-size:.8rem;font-weight:600;z-index:100;display:flex;align-items:center;gap:.45rem;max-width:300px}
 .toast .close{margin-left:auto;cursor:pointer;opacity:.4;font-size:.75rem;padding:2px 5px;border-radius:4px}
 .toast .close:hover{opacity:1;background:var(--s2)}
+#qrz{position:fixed;inset:0;background:rgba(0,0,0,.65);display:grid;place-items:center;z-index:9999;opacity:0;pointer-events:none;transition:opacity .25s ease;backdrop-filter:blur(8px);cursor:zoom-out}
+#qrz.show{opacity:1;pointer-events:all}
+#qrz .qrimg{max-width:84vw;max-height:82vh;border-radius:16px;box-shadow:0 8px 48px rgba(0,0,0,.4);background:#fff;padding:8px;object-fit:contain;cursor:default;transition:transform .3s ease;transform:scale(.92)}
+#qrz.show .qrimg{transform:scale(1)}
+#qrz .qlabel{text-align:center;color:#fff;font-size:.85rem;margin-top:.7rem;font-weight:600;letter-spacing:.02em}
 
 @media(max-width:768px){
   .btn,.swatch,.seg label{touch-action:manipulation}
@@ -195,6 +200,8 @@ async function loadFace(){mbi.style.width="15%";ms.textContent="\u68c0\u6d4b\u73
 loadFace().catch(function(e){ms.textContent="\u52a0\u8f7d\u5931\u8d25: "+e.message;setTimeout(function(){ov.classList.add("hidden");},2500);});
 async function loadRmbg(){setStatus("\u6b63\u5728\u52a0\u8f7d RMBG \u6a21\u578b\uff08\u9996\u6b21\u7ea650MB\uff09\u2026");rw.classList.add("hidden");genBtn.disabled=true;ort.env.wasm.wasmPaths="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";try{rmbgSess=await ort.InferenceSession.create(RM,{executionProviders:["wasm"]});setStatus("RMBG \u6a21\u578b\u52a0\u8f7d\u5b8c\u6210","ok");genBtn.disabled=!srcImg;showToast("RMBG \u5df2\u5c31\u7eea");}catch(e){setStatus("RMBG \u52a0\u8f7d\u5931\u8d25: "+e.message,"err");rmbgSess=null;genBtn.disabled=!srcImg;}}
 lrBtn.addEventListener("click",function(e){e.preventDefault();loadRmbg();});
+// QR code zoom overlay (click to enlarge, click again/outside to close)
+(function(){var ov=document.createElement("div");ov.id="qrz";ov.innerHTML='<img class="qrimg" src="" alt=""/><div class="qlabel"></div>';document.body.appendChild(ov);var qi=ov.querySelector(".qrimg"),ql=ov.querySelector(".qlabel");document.querySelectorAll(".qr-img").forEach(function(img){img.style.cursor="zoom-in";img.addEventListener("click",function(e){e.stopPropagation();qi.src=this.src;qi.alt=this.alt;ql.textContent=this.alt||"\u4e8c\u7ef4\u7801";ov.classList.add("show");});});ov.addEventListener("click",function(){ov.classList.remove("show");});qi.addEventListener("click",function(e){e.stopPropagation();ov.classList.remove("show");});})();
 
 function fitDraw(cv,ctx,img){var W=cv.parentElement.clientWidth||480,H=cv.parentElement.clientHeight||580,r=img.width/img.height,w=r>W/H?W:H*r,h=r>W/H?W/r:H;cv.width=w;cv.height=h;ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);}
 async function detectFace(cv){try{var det=await faceapi.detectSingleFace(cv,new faceapi.TinyFaceDetectorOptions({inputSize:416,scoreThreshold:0.38})).withFaceLandmarks();return det||null;}catch(e){return null;}}
@@ -564,11 +571,11 @@ html = f'''<!DOCTYPE html>
     <div class="tagline">纯前端证件照制作工具 · 照片不上传服务器 · 隐私安全</div>
     <div class="social-row">
       <div class="social-item">
-        <img src="data:image/jpeg;base64,{QR_B64}" alt="扫码关注" loading="lazy" decoding="async"/>
+        <img class="qr-img" src="data:image/jpeg;base64,{QR_B64}" alt="扫码关注" loading="lazy" decoding="async"/>
         <div class="label">📱 扫码关注</div>
       </div>
       <div class="social-item">
-        <img src="data:image/jpeg;base64,{DONATE_B64}" alt="赞赏支持" loading="lazy" decoding="async"/>
+        <img class="qr-img" src="data:image/jpeg;base64,{DONATE_B64}" alt="赞赏支持" loading="lazy" decoding="async"/>
         <div class="label">☕ 赞赏支持</div>
       </div>
     </div>
