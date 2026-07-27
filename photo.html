@@ -182,10 +182,10 @@ button,input,select,textarea{font:inherit}canvas{display:block;max-width:100%}
         <span id="photoName">—</span><span id="photoDims">—</span>
       </div>
       <div id="zoomCtrl" class="hidden" style="display:flex;gap:.35rem;align-items:center;margin-bottom:.5rem">
-        <button style="border:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.3rem .55rem;font-size:.72rem;cursor:pointer;color:var(--text);line-height:1" onclick="zoomStep(-0.08)">🔍-</button>
+        <button id="zoomOut" style="border:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.3rem .55rem;font-size:.72rem;cursor:pointer;color:var(--text);line-height:1">🔍-</button>
         <span style="font-size:.7rem;color:var(--muted);min-width:2.2rem;text-align:center" id="zoomPct">100%</span>
-        <button style="border:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.3rem .55rem;font-size:.72rem;cursor:pointer;color:var(--text);line-height:1" onclick="zoomStep(0.08)">🔍+</button>
-        <button style="border:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.3rem .55rem;font-size:.72rem;cursor:pointer;color:var(--text);line-height:1;margin-left:.15rem" onclick="vx=0;vy=0;vw=srcImg.width;vh=srcImg.height;needsRedraw=true;updateZoomLabel()">⟲</button>
+        <button id="zoomIn" style="border:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.3rem .55rem;font-size:.72rem;cursor:pointer;color:var(--text);line-height:1">🔍+</button>
+        <button id="zoomReset" style="border:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.3rem .55rem;font-size:.72rem;cursor:pointer;color:var(--text);line-height:1;margin-left:.15rem">⟲</button>
       </div>
 
       <hr style="border:none;border-top:1px solid var(--border);margin:.3rem 0"/>
@@ -300,6 +300,11 @@ var root=document.documentElement,tbtn=document.getElementById("tbtn"),up=docume
 var srcImg=null,faceRes=null,rmbgSess=null,dlURL=null,dlBlob=null,cropRect=null,dragState=null,cachedAl=null,cachedComp=null,animFrom=null,animTo=null,animStart=0,needsRedraw=false,pulsePhase=0,renderId=null;
 var FM="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model",RM="https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_quantized.onnx";
 var vx=0,vy=0,vw=0,vh=0;
+// Zoom button handlers
+function zoomReset(){if(!srcImg)return;vx=0;vy=0;vw=srcImg.width;vh=srcImg.height;needsRedraw=true;updateZoomLabel();}
+document.getElementById("zoomOut").addEventListener("click",function(){zoomStep(-0.08);});
+document.getElementById("zoomIn").addEventListener("click",function(){zoomStep(0.08);});
+document.getElementById("zoomReset").addEventListener("click",zoomReset);
 // Mousewheel zoom on crop canvas
 sc.addEventListener("wheel",function(e){e.preventDefault();var d=e.deltaY>0?0.08:-0.08;zoomStep(d);},{passive:false});
 function setStatus(m,c){sb.textContent=m;sb.className="status"+(c?" "+c:"");}
@@ -467,7 +472,6 @@ function save_photos(canvas,fmt,dpi,qual){return new Promise(function(res,rej){v
 async function handleFile(file){if(!file)return;cropRect=null;dragState=null;animFrom=null;animTo=null;cachedAl=null;cachedComp=null;dlBlob=null;vx=0;vy=0;vw=0;vh=0;needsRedraw=true;if(dlURL){URL.revokeObjectURL(dlURL);dlURL=null;}setStatus("\u6b63\u5728\u52a0\u8f7d\u56fe\u7247\u5e76\u68c0\u6d4b\u4eba\u8138\u2026");photoName.textContent=file.name;genBtn.disabled=true;dlBtn.disabled=true;if(dlURL){URL.revokeObjectURL(dlURL);dlURL=null;}srcImg=await createImageBitmap(file);photoDims.textContent=srcImg.width+"x"+srcImg.height+"px";photoInfo.classList.remove("hidden");fitDraw(sc,sx,srcImg);faceRes=await detectFace(sc);if(faceRes){var _sx=srcImg.width/sc.width,_sy=srcImg.height/sc.height;faceRes._sx=_sx;faceRes._sy=_sy;}vx=0;vy=0;vw=srcImg.width;vh=srcImg.height;initCropRect(srcImg,faceRes);drawCropOverlay();drawLM(sx,faceRes);fn.textContent=faceRes?"\u2713 \u68c0\u6d4b\u5230\u4eba\u8138\uff0c\u9884\u8bbe\u88c1\u5207\u6846\u5df2\u81ea\u52a8\u5c45\u4e2d":"\u26a0 \u672a\u68c0\u6d4b\u5230\uff0c\u88c1\u5207\u6846\u5c45\u4e2d\u4f30\u7b97\u3002\u53ef\u62d6\u62fd\u8c03\u6574";drawMask(null);mn.textContent="\u70b9\u51fb\u300c\u751f\u6210\u8bc1\u4ef6\u7167\u300d\u540e\u83b7\u53d6\u62a0\u56fe";rn.textContent="\u62d6\u62fd\u88c1\u5207\u6846\u9884\u89c8\u6548\u679c";rc.width=0;rc.height=0;cachedAl=null;cachedComp=null;  var bt=document.querySelector("input[name=bg]:checked").value;if(bt!=="original"&&!rmbgSess)rw.classList.remove("hidden");genBtn.disabled=false;setStep(2);setStatus(faceRes?"\u2713 \u5df2\u5c31\u7eea\uff01\u62d6\u62fd\u88c1\u5207\u6846\u8c03\u6574\u4f4d\u7f6e\uff0c\u7136\u540e\u70b9\u51fb\u751f\u6210\u3002":"\u5df2\u52a0\u8f7d\uff0c\u53ef\u62d6\u62fd\u88c1\u5207\u6846\u8c03\u6574\u4f4d\u7f6e\u3002",faceRes?"ok":"");showToast("\u7167\u7247\u5df2\u52a0\u8f7d ("+srcImg.width+"\u00d7"+srcImg.height+")");
   document.getElementById("zoomCtrl").classList.remove("hidden");updateZoomLabel();
 }
-window.zoomStep=zoomStep;window.updateZoomLabel=updateZoomLabel;
 up.addEventListener("change",function(e){handleFile(e.target.files[0]);});
 
 // Drag & drop
