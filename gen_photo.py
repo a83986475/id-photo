@@ -501,8 +501,6 @@ html = f'''<!DOCTYPE html>
         </div>
       </div>
 
-      <input id="hs" type="range" min="0.28" max="0.78" step="0.01" value="0.42" oninput="document.getElementById('hsv').textContent=Math.round(this.value*100)+'%';needsRedraw=true"/></div>
-      <input id="tm" type="range" min="0.05" max="0.40" step="0.01" value="0.35" oninput="document.getElementById('tmv').textContent=Math.round(this.value*100)+'%';needsRedraw=true"/></div>
 
       <div class="field"><label>排版模式</label><select id="sm">
         <option value="single">单张导出</option>
