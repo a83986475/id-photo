@@ -368,7 +368,7 @@ html = f'''<!DOCTYPE html>
         <div class="label">上传照片或拖拽到此处</div>
         <div class="hint">支持 JPG / PNG / WebP</div>
       </label>
-      <input id="upload" type="file" accept="image/*" style="display:none" onchange="handleFile(this.files[0])"/>
+      <input id="upload" type="file" accept="image/*" style="display:none"/>
 
       <div id="photoInfo" class="hidden" style="font-size:.73rem;color:var(--muted);margin:-.3rem 0 .5rem;padding:.35rem .55rem;background:var(--s2);border-radius:7px;display:flex;justify-content:space-between">
         <span id="photoName">—</span><span id="photoDims">—</span>
