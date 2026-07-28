@@ -251,7 +251,7 @@ function initCropRect(bmp,det){
   }
   var fc2=getFixedCrop();cropRect.cx=fc2.cx;cropRect.cy=fc2.cy;cropRect.pw=fc2.pw;cropRect.ph=fc2.ph;
 }
-function drawFaceGuide(ctx,det,W,H,iw,ih){
+function drawFaceGuide(ctx,det,W,H){
   if(!cropRect)return;ctx.save();
   var ccx=imgToCx(cropRect.cx),ccy=imgToCy(cropRect.cy),cpw=cropRect.pw/vw*W,cph=cropRect.ph/vh*H;
   var sw=W/vw,sh=H/vh;
@@ -333,7 +333,7 @@ function drawCropOverlay(){
   // Dark overlay outside fixed crop area
   sx.fillStyle="rgba(0,0,0,.32)";sx.fillRect(0,0,W,ccy);sx.fillRect(0,ccy+cph,W,H-ccy-cph);sx.fillRect(0,ccy,ccx,cph);sx.fillRect(ccx+cpw,ccy,W-ccx-cpw,cph);
   // Face reference guide ON TOP of dark overlay
-  drawFaceGuide(sx,faceRes,W,H,iw,ih);
+  drawFaceGuide(sx,faceRes,W,H);
   var glow=0.15+0.12*Math.sin(pulsePhase);
   sx.save();sx.shadowColor="rgba(255,255,255,"+glow+")";sx.shadowBlur=12+8*Math.sin(pulsePhase*0.7);sx.strokeStyle="#fff";sx.lineWidth=2.5;sx.setLineDash([6,4]);sx.strokeRect(ccx,ccy,cpw,cph);sx.setLineDash([]);sx.restore();
   // Corner handles (decorative only, no drag)
