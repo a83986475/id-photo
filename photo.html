@@ -553,8 +553,6 @@ dlBtn.addEventListener("click",function(){
   if(!dlURL||!dlBlob)return;
   var fmt=document.querySelector("input[name=fmt]:checked").value,fname="id-photo-"+(fmt==="png"?".png":".jpg");
   var a=document.createElement("a");a.href=dlURL;a.download=fname;a.click();
-  // Download celebration toast
-  var celeb=document.createElement("div");celeb.className="toast";celeb.innerHTML='<span>🎉 下载成功！</span>';celeb.style.background='var(--p)';celeb.style.color='#fff';celeb.style.border='none';document.body.appendChild(celeb);setTimeout(function(){celeb.style.opacity='0';setTimeout(function(){celeb.remove();},400);},2000);
 });
 
 function sharePhoto(){
