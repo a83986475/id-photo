@@ -395,14 +395,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
   // Skip face guide in sheet mode (only show for single photo)
   if(sm&&sm.value!=="single")return;
   ctx.save();
-  var ccx,ccy,cpw,cph,sw,sh;
-  if(isPreview){
-    ccx=0;ccy=0;cpw=W;cph=H;
-    sw=W/cropRect.pw;sh=H/cropRect.ph;
-  }else{
-    var fc2=getFixedCrop();ccx=fc2.canvasX;ccy=fc2.canvasY;cpw=fc2.canvasW;cph=fc2.canvasH;
-    sw=W/vw;sh=H/vh;
-  }
+  var fc2=getFixedCrop(),ccx=fc2.canvasX,ccy=fc2.canvasY,cpw=fc2.canvasW,cph=fc2.canvasH;
   // --- Alignment reference inside crop area ---
   // Center vertical line (subtle)
   ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=1.5;ctx.setLineDash([3,5]);
