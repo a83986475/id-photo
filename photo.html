@@ -330,6 +330,7 @@ document.querySelectorAll("input[name=bg]").forEach(function(r){r.addEventListen
 document.querySelectorAll("input[name=fmt]").forEach(function(r){r.addEventListener("change",function(){var v=document.querySelector("input[name=fmt]:checked").value;document.getElementById("qualField").classList.toggle("hidden",v!=="jpeg");});});
 document.getElementById("qual").addEventListener("input",function(){document.getElementById("qualVal").textContent=this.value+"%";});
 sm.addEventListener("change",function(){needsRedraw=true;});
+sz.addEventListener("change",function(){needsRedraw=true;});
 swatches.addEventListener("click",function(e){var sw=e.target.closest(".swatch");if(!sw)return;swatches.querySelectorAll(".swatch").forEach(function(s){s.classList.remove("selected");});sw.classList.add("selected");});
 
 async function loadFace(){mbi.style.width="15%";ms.textContent="\u68c0\u6d4b\u73af\u5883\u2026";await new Promise(function(r){setTimeout(r,300);});mbi.style.width="30%";ms.textContent="\u52a0\u8f7d tinyFaceDetector\u2026";await faceapi.nets.tinyFaceDetector.loadFromUri(FM);mbi.style.width="65%";ms.textContent="\u52a0\u8f7d faceLandmark68Net\u2026";await faceapi.nets.faceLandmark68Net.loadFromUri(FM);mbi.style.width="100%";ms.textContent="\u6a21\u578b\u52a0\u8f7d\u5b8c\u6210!";await new Promise(function(r){setTimeout(r,400);});ov.classList.add("hidden");}
