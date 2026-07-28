@@ -388,7 +388,7 @@ function initCropRect(bmp,det){
     var fromVy=Math.max(0,Math.min(origH*0.3-vh*0.4,ih-vh));
     animFrom={vx:fromVx,vy:fromVy};animTo={vx:vx,vy:vy};animStart=Date.now();
   }
-  var fc2=getFixedCrop();cropRect.cx=fc2.cx;cropRect.cy=fc2.cy;cropRect.pw=fc2.pw;cropRect.ph=fc2.ph;
+  var fc2=getFixedCrop();ccx=fc2.canvasX;ccy=fc2.canvasY;cpw=fc2.canvasW;cph=fc2.canvasH;
 }
 function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
   if(!cropRect)return;
@@ -427,7 +427,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
     var targetFh=cph*hsVal; // face height in canvas pixels
     var targetFw=targetFh*0.78; // face width ≈ 78% of face height
     var targetFcx=ccx+cpw/2; // centered horizontally
-    var targetFcy=ccy+cph*tm2+cropRect.fh/cropRect.ph*cph*0.5; // positioned based on top margin
+    var targetFcy=ccy+cph*(tm2+hsVal*0.5); // center of target face in canvas pixels
     // Ghost face fill (subtle)
     var grad=ctx.createRadialGradient(targetFcx,targetFcy,0,targetFcx,targetFcy,targetFw*0.6);
     grad.addColorStop(0,"rgba(0,255,180,.35)");
@@ -446,13 +446,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
     ctx.fillText("\u76ee\u6807\u8138\u90e8\u4f4d\u7f6e",targetFcx,targetFcy+targetFh*0.5+14);
   }
   
-  // --- Static face position guide ---
-  // No face detected - show generic ghost (always visible as static reference)
-  ctx.strokeStyle="rgba(180,180,180,.5)";ctx.fillStyle="rgba(180,180,180,.12)";ctx.lineWidth=2.5;ctx.setLineDash([4,8]);
-  var cx2=ccx+cpw/2,cy2=ccy+cph*0.35,eh2=cph*0.35,ew2=eh2*0.78;
-  ctx.beginPath();ctx.ellipse(cx2,cy2,ew2,eh2,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle="rgba(180,180,180,.7)";ctx.font="bold 10px system-ui,sans-serif";ctx.textAlign="center";
-  ctx.fillText("脸部参考位置",cx2,cy2+eh2+12);
+
   
   // --- Head size indicator ---
   if(cropRect.fh){var actualPct=Math.round(cropRect.fh/cropRect.ph*100),targetPct=Math.round(hsVal*100);
