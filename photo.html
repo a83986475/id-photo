@@ -414,7 +414,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
   // --- Target face area (ghost outline based on settings) ---
   var hsVal=0.42,tm2=0.35;
   // Eye level is at (topMargin + faceHeight*0.36) from top of crop
-  var eyeY=ccy+cph*(tm2+hsVal*0.36),eyeX=ccx+cpw/2;
+  var eyeY=ccy+cph*(tm2+hsVal*0.45); // eyes at ~45% of face height from top of face
   // Draw eye level reference line (more visible)
   ctx.strokeStyle="rgba(255,200,50,.85)";ctx.lineWidth=3.5;ctx.setLineDash([5,7]);
   ctx.beginPath();ctx.moveTo(ccx+12,eyeY);ctx.lineTo(ccx+cpw-12,eyeY);ctx.stroke();ctx.setLineDash([]);
