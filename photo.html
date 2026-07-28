@@ -400,8 +400,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
     ccx=0;ccy=0;cpw=W;cph=H;
     sw=W/cropRect.pw;sh=H/cropRect.ph;
   }else{
-    ccx=imgToCx(cropRect.cx);ccy=imgToCy(cropRect.cy);
-    cpw=cropRect.pw/vw*W;cph=cropRect.ph/vh*H;
+    var fc2=getFixedCrop();ccx=fc2.canvasX;ccy=fc2.canvasY;cpw=fc2.canvasW;cph=fc2.canvasH;
     sw=W/vw;sh=H/vh;
   }
   // --- Alignment reference inside crop area ---
@@ -425,7 +424,7 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
   
   // Draw target face ellipse (where face SHOULD be based on settings)
   if(cropRect.fh){
-    var targetFh=cropRect.ph*hsVal; // face height = crop height * head ratio
+    var targetFh=cph*hsVal; // face height in canvas pixels
     var targetFw=targetFh*0.78; // face width ≈ 78% of face height
     var targetFcx=ccx+cpw/2; // centered horizontally
     var targetFcy=ccy+cph*tm2+cropRect.fh/cropRect.ph*cph*0.5; // positioned based on top margin
