@@ -9,7 +9,21 @@ def b64(p):
 
 QR_B64 = b64('qrcode_opt.jpg')
 DONATE_B64 = b64('donate_opt.jpg')
-ICON_B64 = b64('icon_opt.png')
+# Camera SVG icon (inline, no longer depends on icon_opt.png)
+ICON_B64 = base64.b64encode(b'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="28" width="84" height="56" rx="10" fill="url(#g)"/>
+  <rect x="38" y="16" width="24" height="14" rx="4" fill="url(#g)"/>
+  <circle cx="50" cy="56" r="20" fill="#fff"/>
+  <circle cx="50" cy="56" r="14" fill="url(#g)"/>
+  <circle cx="78" cy="42" r="4" fill="#FFC107"/>
+  <circle cx="50" cy="56" r="6" fill="#fff"/>
+</svg>''').decode()
 path = r'C:\Users\Yang\Desktop\photo.html'
 
 CSS = r'''
@@ -437,7 +451,7 @@ html = f'''<!DOCTYPE html>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ID Photo Studio - 在线证件照制作 | 羊在四方</title>
-  <link rel="icon" href="data:image/png;base64,{ICON_B64}"/>
+  <link rel="icon" href="data:image/svg+xml;base64,{ICON_B64}"/>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
   <style>{CSS}</style>
@@ -452,7 +466,7 @@ html = f'''<!DOCTYPE html>
 
 <div class="shell">
   <header class="topbar">
-    <div class="brand"><div class="brand-logo"><img src="data:image/png;base64,{ICON_B64}" alt="logo"/></div><div class="brand-info"><span class="brand-name">ID Photo Studio</span><span class="brand-sub">在线证件照制作 · 羊在四方</span></div></div>
+    <div class="brand"><div class="brand-logo"><img src="data:image/svg+xml;base64,{ICON_B64}" alt="logo"/></div><div class="brand-info"><span class="brand-name">ID Photo Studio</span><span class="brand-sub">在线证件照制作 · 羊在四方</span></div></div>
     <div class="top-actions"><button class="tbtn" id="tbtn">🌙</button></div>
   </header>
 
