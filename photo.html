@@ -390,10 +390,20 @@ function initCropRect(bmp,det){
   }
   var fc2=getFixedCrop();cropRect.cx=fc2.cx;cropRect.cy=fc2.cy;cropRect.pw=fc2.pw;cropRect.ph=fc2.ph;
 }
-function drawFaceGuide(ctx,det,W,H,iw,ih){
-  if(!cropRect)return;ctx.save();
-  var ccx=imgToCx(cropRect.cx),ccy=imgToCy(cropRect.cy),cpw=cropRect.pw/vw*W,cph=cropRect.ph/vh*H;
-  var sw=W/vw,sh=H/vh;
+function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
+  if(!cropRect)return;
+  // Skip face guide in sheet mode (only show for single photo)
+  if(sm&&sm.value!=="single")return;
+  ctx.save();
+  var ccx,ccy,cpw,cph,sw,sh;
+  if(isPreview){
+    ccx=0;ccy=0;cpw=W;cph=H;
+    sw=W/cropRect.pw;sh=H/cropRect.ph;
+  }else{
+    ccx=imgToCx(cropRect.cx);ccy=imgToCy(cropRect.cy);
+    cpw=cropRect.pw/vw*W;cph=cropRect.ph/vh*H;
+    sw=W/vw;sh=H/vh;
+  }
   // --- Alignment reference inside crop area ---
   // Center vertical line (subtle)
   ctx.strokeStyle="rgba(255,255,255,.15)";ctx.lineWidth=1;ctx.setLineDash([3,5]);
@@ -438,16 +448,16 @@ function drawFaceGuide(ctx,det,W,H,iw,ih){
   }
   
   // --- Detected face overlay (where face IS, vivid colors) ---
-  if(det&&det._sx&&cropRect){var sx=det._sx,sy=det._sy;var pts=det.landmarks.positions;var ly=0;for(var i=36;i<48;i++)ly+=pts[i].y;ly=ly/12*sy;var eh=(pts[8].y-pts[27].y)*sy*2.4,ew=eh*0.82;var fcx=cropRect.fcx;
+  if(det&&det._sx&&cropRect){var sx_=det._sx,sy_=det._sy;var mapX=isPreview?function(v){return(v-cropRect.cx)/cropRect.pw*W}:function(v){return v/vw*W};var mapY=isPreview?function(v){return(v-cropRect.cy)/cropRect.ph*H}:function(v){return v/vh*H};var pts=det.landmarks.positions;var ly=0;for(var i=36;i<48;i++)ly+=pts[i].y;ly=ly/12*sy_;var eh=(pts[8].y-pts[27].y)*sy_*2.4,ew=eh*0.82;var fcx=cropRect.fcx;
     ctx.strokeStyle="rgba(255,100,50,.6)";ctx.fillStyle="rgba(255,100,50,.2)";ctx.lineWidth=2.5;ctx.setLineDash([]);
-    ctx.beginPath();ctx.ellipse(imgToCx(fcx),imgToCy(ly),ew*sw/2,eh*sh/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.ellipse(mapX(fcx),mapY(ly),ew*sw/2,eh*sh/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();
     // Detected eye dots - bright yellow
-    ctx.fillStyle="rgba(255,220,50,.9)";[37,46].forEach(function(i){var p=pts[i];ctx.beginPath();ctx.arc(imgToCx(p.x*sx),imgToCy(p.y*sy),5,0,Math.PI*2);ctx.fill();});
+    ctx.fillStyle="rgba(255,220,50,.9)";[37,46].forEach(function(i){var p=pts[i];ctx.beginPath();ctx.arc(mapX(p.x*sx_),mapY(p.y*sy_),5,0,Math.PI*2);ctx.fill();});
     // Chin dot
-    ctx.fillStyle="rgba(255,100,50,.6)";ctx.beginPath();ctx.arc(imgToCx(pts[8].x*sx),imgToCy(pts[8].y*sy),4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="rgba(255,100,50,.6)";ctx.beginPath();ctx.arc(mapX(pts[8].x*sx_),mapY(pts[8].y*sy_),4,0,Math.PI*2);ctx.fill();
     // Detected label
     ctx.fillStyle="rgba(255,100,50,.7)";ctx.font="bold 9px system-ui,sans-serif";ctx.textAlign="center";
-    ctx.fillText("\u68c0\u6d4b\u5230\u7684\u8138",imgToCx(fcx),imgToCy(ly)-eh*sh*0.5-8);
+    ctx.fillText("\u68c0\u6d4b\u5230\u7684\u8138",mapX(fcx),mapY(ly)-eh*sh*0.5-8);
   }else{
     // No face detected - show generic ghost
     ctx.strokeStyle="rgba(180,180,180,.15)";ctx.fillStyle="rgba(180,180,180,.04)";ctx.lineWidth=1.5;ctx.setLineDash([4,8]);
@@ -472,7 +482,6 @@ function drawCropOverlay(){
   // Dark overlay outside fixed crop area
   sx.fillStyle="rgba(0,0,0,.32)";sx.fillRect(0,0,W,ccy);sx.fillRect(0,ccy+cph,W,H-ccy-cph);sx.fillRect(0,ccy,ccx,cph);sx.fillRect(ccx+cpw,ccy,W-ccx-cpw,cph);
   // Face reference guide ON TOP of dark overlay
-  drawFaceGuide(sx,faceRes,W,H,iw,ih);
   var glow=0.15+0.12*Math.sin(pulsePhase);
   sx.save();sx.shadowColor="rgba(255,255,255,"+glow+")";sx.shadowBlur=12+8*Math.sin(pulsePhase*0.7);sx.strokeStyle="#fff";sx.lineWidth=2.5;sx.setLineDash([6,4]);sx.strokeRect(ccx,ccy,cpw,cph);sx.setLineDash([]);sx.restore();
   // Corner handles (decorative only, no drag)
@@ -486,7 +495,9 @@ function drawCropOverlay(){
 function updatePreview(){
   if(!srcImg||!cropRect){rc.width=0;rc.height=0;rn.textContent="\u7b49\u5f85\u751f\u6210\u2026";return;}
   var srcComp=cachedComp||srcImg;
-  try{var cropped=cropCanvas(srcImg,faceRes,srcComp,cropRect);var display=sm.value==="single"?cropped:buildSheet(cropped);var PW=rc.parentElement.clientWidth||480,PH=rc.parentElement.clientHeight||580,scale=Math.min(PW/display.width,PH/display.height,1);rc.width=display.width*scale;rc.height=display.height*scale;rx.drawImage(display,0,0,rc.width,rc.height);var dims=sz.value.split("x").map(Number);rn.textContent="\u9884\u89c8 "+display.width+"x"+display.height+"px\uff08"+dims[0]+"x"+dims[1]+"\uff09";}catch(e){rn.textContent="\u9884\u89c8\u66f4\u65b0\u5931\u8d25";}
+  try{var cropped=cropCanvas(srcImg,faceRes,srcComp,cropRect);var display=sm.value==="single"?cropped:buildSheet(cropped);var PW=rc.parentElement.clientWidth||480,PH=rc.parentElement.clientHeight||580,scale=Math.min(PW/display.width,PH/display.height,1);rc.width=display.width*scale;rc.height=display.height*scale;rx.drawImage(display,0,0,rc.width,rc.height);
+  drawFaceGuide(rx,faceRes,rc.width,rc.height,srcImg.width,srcImg.height,true);
+  var dims=sz.value.split("x").map(Number);rn.textContent="\u9884\u89c8 "+display.width+"x"+display.height+"px\uff08"+dims[0]+"x"+dims[1]+"\uff09";}catch(e){rn.textContent="\u9884\u89c8\u66f4\u65b0\u5931\u8d25";}
 }
 function getTouchPos(e){var t=e.touches[0],r=sc.getBoundingClientRect();return{x:t.clientX-r.left,y:t.clientY-r.top};}
 // Pan-only drag handlers (crop rect is fixed, only photo moves)
