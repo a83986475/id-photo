@@ -447,25 +447,13 @@ function drawFaceGuide(ctx,det,W,H,iw,ih,isPreview){
     ctx.fillText("\u76ee\u6807\u8138\u90e8\u4f4d\u7f6e",targetFcx,targetFcy+targetFh*0.5+14);
   }
   
-  // --- Detected face overlay (where face IS, vivid colors) ---
-  if(det&&det._sx&&cropRect){var sx_=det._sx,sy_=det._sy;var mapX=isPreview?function(v){return(v-cropRect.cx)/cropRect.pw*W}:function(v){return(v-vx)/vw*W};var mapY=isPreview?function(v){return(v-cropRect.cy)/cropRect.ph*H}:function(v){return(v-vy)/vh*H};var pts=det.landmarks.positions;var ly=0;for(var i=36;i<48;i++)ly+=pts[i].y;ly=ly/12*sy_;var eh=(pts[8].y-pts[27].y)*sy_*2.4,ew=eh*0.82;var fcx=cropRect.fcx;
-    ctx.strokeStyle="rgba(255,100,50,.6)";ctx.fillStyle="rgba(255,100,50,.2)";ctx.lineWidth=2.5;ctx.setLineDash([]);
-    ctx.beginPath();ctx.ellipse(mapX(fcx),mapY(ly),ew*sw/2,eh*sh/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();
-    // Detected eye dots - bright yellow
-    ctx.fillStyle="rgba(255,220,50,.9)";[37,46].forEach(function(i){var p=pts[i];ctx.beginPath();ctx.arc(mapX(p.x*sx_),mapY(p.y*sy_),5,0,Math.PI*2);ctx.fill();});
-    // Chin dot
-    ctx.fillStyle="rgba(255,100,50,.6)";ctx.beginPath();ctx.arc(mapX(pts[8].x*sx_),mapY(pts[8].y*sy_),4,0,Math.PI*2);ctx.fill();
-    // Detected label
-    ctx.fillStyle="rgba(255,100,50,.7)";ctx.font="bold 9px system-ui,sans-serif";ctx.textAlign="center";
-    ctx.fillText("\u68c0\u6d4b\u5230\u7684\u8138",mapX(fcx),mapY(ly)-eh*sh*0.5-8);
-  }else{
-    // No face detected - show generic ghost
-    ctx.strokeStyle="rgba(180,180,180,.15)";ctx.fillStyle="rgba(180,180,180,.04)";ctx.lineWidth=1.5;ctx.setLineDash([4,8]);
-    var cx2=ccx+cpw/2,cy2=ccy+cph*0.35,eh2=cph*0.35,ew2=eh2*0.78;
-    ctx.beginPath();ctx.ellipse(cx2,cy2,ew2,eh2,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);
-    ctx.fillStyle="rgba(180,180,180,.15)";ctx.font="bold 8px system-ui,sans-serif";ctx.textAlign="center";
-    ctx.fillText("\u8138\u90e8\u53c2\u8003\u4f4d\u7f6e",cx2,cy2+eh2+12);
-  }
+  // --- Static face position guide ---
+  // No face detected - show generic ghost (always visible as static reference)
+  ctx.strokeStyle="rgba(180,180,180,.15)";ctx.fillStyle="rgba(180,180,180,.04)";ctx.lineWidth=1.5;ctx.setLineDash([4,8]);
+  var cx2=ccx+cpw/2,cy2=ccy+cph*0.35,eh2=cph*0.35,ew2=eh2*0.78;
+  ctx.beginPath();ctx.ellipse(cx2,cy2,ew2,eh2,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle="rgba(180,180,180,.15)";ctx.font="bold 8px system-ui,sans-serif";ctx.textAlign="center";
+  ctx.fillText("脸部参考位置",cx2,cy2+eh2+12);
   
   // --- Head size indicator ---
   if(cropRect.fh){var actualPct=Math.round(cropRect.fh/cropRect.ph*100),targetPct=Math.round(hsVal*100);
